@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Image Gererator using OpenAI API</title>
+    <style>
+      .min-height {
+        min-height: 100vh;
+      }
+    </style>
+  </head>
+  <body class="max-w-4xl mx-auto">
+    <div
+      class="min-height flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8 -mt-20"
+    >
+      <div class="text-center">
+        <h1 class="text-4xl font-bold mb-10">Image Generator</h1>
+        <p class="text-md lg:text-xl mb-10">
+          This is a simple image generator using
+          <a href="https://openai.com/api/" class="font-semibold"
+            >OpenAI API.</a
+          >
+          you can generate images by entering short description of the image or
+          by entering a keyword.
+        </p>
+      </div>
+      <div class="flex flex-row justify-center">
+        <input
+          type="text"
+          id="text"
+          class="shadow-lg outline-none w-full rounded-l-lg px-4 py-4 text-gray-600 border-r-2 border-gray-200"
+          placeholder="An Impressionist oil painting of sunflowers in a purple vase…"
+        />
+        <button
+          id="btn"
+          class="font-bold py-4 px-8 rounded-r-lg shadow-lg"
+          onclick="generateImage()"
+        >
+          Generate
+        </button>
+      </div>
+      <div id="image" class="grid grid-cols-2 lg:grid-cols-3 gap-1 mt-4"></div>
+      <footer
+        class="text-center mt-10 border-t-2 border-gray-200 pt-4"
+        id="checkAuthor"
+      >
+        <p class="text-sm">
+          Made with ❤️ by
+          <a href="https://github.com/sauravhathi" class="font-semibold"
+            >@sauravhathi</a
+          >
+        </p>
+      </footer>
+    </div>
+  </body>
+  <script>
+    const api = "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";
+    const url = "https://api.openai.com/v1/images/generations";
+    const text = document.getElementById("text");
+    const image = document.getElementById("image");
+    const btn = document.getElementById("btn");
+
+    function generateImage() {
+      if (text.value === "") {
+        alert("Please enter a value");
+      } else {
+        const data = {
+          prompt: text.value,
+          n: 3,
+          size: "1024x1024",
+        };
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${api}`,
+          },
+          body: JSON.stringify(data),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            const arraySize = data.data.length;
+            for (let i = 0; i < arraySize; i++) {
+              image.innerHTML += `<img src="${data.data[i].url}" alt="image" class="w-100 p-2">`;
+            }
+          });
+      }
+    }
+
+    const checkAuthor = document.getElementById("checkAuthor");
+    if (checkAuthor.children[0].children[0].textContent === "@sauravhathi") {
+    } else {
+      window.location.href = "https://github.com/sauravhathi";
+    }
+
+    text.addEventListener("input", function () {
+      if (text.value === "") {
+        btn.classList.remove("bg-slate-900", "text-slate-50");
+        text.classList.add("border-r-2", "border-gray-200");
+      } else {
+        text.classList.remove("border-r-2", "border-gray-200");
+        btn.classList.add("bg-slate-900", "text-slate-50");
+      }
+    });
+  </script>
+</html>
