@@ -1,0 +1,36 @@
+.min-height {
+    min-height: 100vh;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.btn-spinner {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-spinner:after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    margin-left: -10px;
+    margin-top: -10px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    animation: spin 0.7s linear infinite;
+}
+
+input[type="radio"]:checked+label {
+    font-weight: bold;
+    border-color: black;
+    border-bottom: black solid 2px;
+}

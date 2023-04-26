@@ -1,114 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="api.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="app.css">
     <title>Image Gererator using OpenAI API</title>
-    <style>
-      .min-height {
-        min-height: 100vh;
-      }
-    </style>
   </head>
-  <body class="max-w-4xl mx-auto">
-    <div
-      class="min-height flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8 -mt-20"
-    >
-      <div class="text-center">
-        <h1 class="text-4xl font-bold mb-10">Image Generator</h1>
-        <p class="text-md lg:text-xl mb-10">
-          This is a simple image generator using
-          <a href="https://openai.com/api/" class="font-semibold"
-            >OpenAI API.</a
-          >
-          you can generate images by entering short description of the image or
-          by entering a keyword.
-        </p>
+  <body>
+    <header class="bg-gray-800 text-white flex justify-between items-center p-4">
+      <div class="flex items-center">
+        <!-- <img src="logo.svg" alt="Logo" class="h-8 w-8 mr-2"> -->
+        <!-- <h1 class="font-bold text-lg">My Website</h1> -->
       </div>
-      <div class="flex flex-row justify-center">
-        <input
-          type="text"
-          id="text"
-          class="shadow-lg outline-none w-full rounded-l-lg px-4 py-4 text-gray-600 border-r-2 border-gray-200"
-          placeholder="An Impressionist oil painting of sunflowers in a purple vase…"
-        />
-        <button
-          id="btn"
-          class="font-bold py-4 px-8 rounded-r-lg shadow-lg"
-          onclick="generateImage()"
-        >
-          Generate
-        </button>
-      </div>
-      <div id="image" class="grid grid-cols-2 lg:grid-cols-3 gap-1 mt-4"></div>
-      <footer
-        class="text-center mt-10 border-t-2 border-gray-200 pt-4"
-        id="checkAuthor"
+      <nav class="flex">
+        <!-- <a href="#" class="text-white hover:text-gray-500 px-3 py-2">Home</a> -->
+        <!-- <a href="#" class="text-white hover:text-gray-500 px-3 py-2">About</a> -->
+        <a href="#" class="text-white hover:text-gray-500 px-3 py-2" id="btnSettings"><i data-feather="settings"></i></a>
+      </nav>
+    </header>
+    <div class="max-w-4xl mx-auto">
+      <div
+        class="min-height flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8 -mt-20"
       >
-        <p class="text-sm">
-          Made with ❤️ by
-          <a href="https://github.com/sauravhathi" class="font-semibold"
-            >@sauravhathi</a
+        <div class="text-center">
+          <h1 class="text-4xl font-bold mb-10">Image Generator</h1>
+          <p class="text-md lg:text-xl mb-10">
+            This is a simple image generator using
+            <a href="https://openai.com/api/" class="font-semibold"
+              >OpenAI API.</a
+            >
+            you can generate images by entering short description of the image or
+            by entering a keyword.
+          </p>
+        </div>
+        <div class="flex flex-row justify-center">
+          <input
+            type="text"
+            id="text"
+            class="shadow-lg outline-none w-full rounded-l-lg px-4 py-4 text-gray-600 border-r-2 border-gray-200"
+            placeholder="An Impressionist oil painting of sunflowers in a purple vase…"
+            maxlength="1000"
+          />
+          <button
+            id="btn"
+            class="font-bold py-4 px-8 rounded-r-lg shadow-lg w-1/5"
           >
-        </p>
-      </footer>
+            Generate
+          </button>
+        </div>
+        <div class="flex flex-row items-center mt-10 border-b-2 pb-4">
+          <input type="radio" id="option1" name="size" value="256x256" class="hidden">
+          <label for="option1" class="mr-3 cursor-pointer select-none w-1/6 text-center">256x256</label>
+
+          <input type="radio" id="option2" name="size" value="512x512" class="hidden">
+          <label for="option2" class="mr-3 cursor-pointer select-none w-1/6 text-center">512x512</label>
+
+          <input type="radio" id="option3" name="size" value="1024x1024" class="hidden" checked>
+          <label for="option3" class="mr-3 cursor-pointer select-none w-1/6 text-center">1024x1024</label>
+        </div>
+        <div id="image" class="grid grid-cols-2 lg:grid-cols-3 gap-1 mt-4"></div>
+        <footer
+          class="text-center mt-5 border-t-2 border-gray-200 pt-4"
+          id="checkAuthor"
+        >
+          <p class="text-sm">
+            Made with ❤️ by
+            <a href="https://github.com/sauravhathi" class="font-semibold"
+              >@sauravhathi</a
+            >
+          </p>
+        </footer>
+      </div>
+    </div>
+    <div class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" id="settings">
+      <div class="bg-white rounded shadow-lg w-2/3">
+        <div class="flex justify-between items-center p-4">
+          <h3 class="text-lg font-bold">Settings</h3>
+          <button class="text-gray-500 hover:text-gray-800 focus:outline-none" id="close-modal">
+            <svg class="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                d="M6.707 17.707l8-8a.999.999 0 0 0-1.414-1.414l-8 8a.999.999 0 0 0 1.414 1.414zM15.293 17.707l-8-8a.999.999 0 0 0-1.414 1.414l8 8a.999.999 0 0 0 1.414-1.414z" />
+            </svg>
+          </button>
+        </div>
+        <div class="flex items-center w-full p-4 pb-8">
+          <label class="block text-gray-700 text-sm font-bold mb-2 w-1/6" for="settingsApiKey">API Key</label>
+          <input
+            class="appearance-none border rounded w-5/6 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="settingsApiKey" type="text" placeholder="API key...">
+        </div>
+      </div>
     </div>
   </body>
-  <script>
-    
-    if (api === ""){
-      alert("Use your openAI API key");
-    }
-    const url = "https://api.openai.com/v1/images/generations";
-    const text = document.getElementById("text");
-    const image = document.getElementById("image");
-    const btn = document.getElementById("btn");
-
-    function generateImage() {
-      if (text.value === "") {
-        alert("Please enter a value");
-      } else {
-        const data = {
-          prompt: text.value,
-          n: 3,
-          size: "1024x1024",
-        };
-        fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${api}`,
-          },
-          body: JSON.stringify(data),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(data);
-            const arraySize = data.data.length;
-            for (let i = 0; i < arraySize; i++) {
-              image.innerHTML += `<img src="${data.data[i].url}" alt="image" class="w-100 p-2">`;
-            }
-          });
-      }
-    }
-
-    const checkAuthor = document.getElementById("checkAuthor");
-    if (checkAuthor.children[0].children[0].textContent === "@sauravhathi") {
-    } else {
-      window.location.href = "https://github.com/sauravhathi";
-    }
-
-    text.addEventListener("input", function () {
-      if (text.value === "") {
-        btn.classList.remove("bg-slate-900", "text-slate-50");
-        text.classList.add("border-r-2", "border-gray-200");
-      } else {
-        text.classList.remove("border-r-2", "border-gray-200");
-        btn.classList.add("bg-slate-900", "text-slate-50");
-      }
-    });
-  </script>
+  <script src="app.js"></script>
 </html>
