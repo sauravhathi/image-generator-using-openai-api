@@ -1,114 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="api.js"></script>
-    <title>Image Gererator using OpenAI API</title>
-    <style>
-      .min-height {
-        min-height: 100vh;
-      }
-    </style>
-  </head>
-  <body class="max-w-4xl mx-auto">
-    <div
-      class="min-height flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8 -mt-20"
-    >
-      <div class="text-center">
-        <h1 class="text-4xl font-bold mb-10">Image Generator</h1>
-        <p class="text-md lg:text-xl mb-10">
-          This is a simple image generator using
-          <a href="https://openai.com/api/" class="font-semibold"
-            >OpenAI API.</a
-          >
-          you can generate images by entering short description of the image or
-          by entering a keyword.
-        </p>
-      </div>
-      <div class="flex flex-row justify-center">
-        <input
-          type="text"
-          id="text"
-          class="shadow-lg outline-none w-full rounded-l-lg px-4 py-4 text-gray-600 border-r-2 border-gray-200"
-          placeholder="An Impressionist oil painting of sunflowers in a purple vase…"
-        />
-        <button
-          id="btn"
-          class="font-bold py-4 px-8 rounded-r-lg shadow-lg"
-          onclick="generateImage()"
-        >
-          Generate
-        </button>
-      </div>
-      <div id="image" class="grid grid-cols-2 lg:grid-cols-3 gap-1 mt-4"></div>
-      <footer
-        class="text-center mt-10 border-t-2 border-gray-200 pt-4"
-        id="checkAuthor"
-      >
-        <p class="text-sm">
-          Made with ❤️ by
-          <a href="https://github.com/sauravhathi" class="font-semibold"
-            >@sauravhathi</a
-          >
-        </p>
-      </footer>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="api.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <title>Image Gererator using OpenAI API</title>
+</head>
+
+<body class="max-w-4xl mx-auto">
+  <div class="flex flex-col justify-center px-4 pt-12 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h1 class="text-4xl font-bold mb-10">Image Generator</h1>
+      <p class="text-md lg:text-xl mb-10">
+        This is a simple image generator using
+        <a href="https://openai.com/api/" class="font-semibold">OpenAI API.</a>
+        You can generate images by entering a short description of the image or by entering a keyword.
+      </p>
     </div>
-  </body>
-  <script>
-    
-    if (api === ""){
-      alert("Use your openAI API key");
-    }
-    const url = "https://api.openai.com/v1/images/generations";
-    const text = document.getElementById("text");
-    const image = document.getElementById("image");
-    const btn = document.getElementById("btn");
+    <div class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
+      <div class="mb-4 flex flex-col gap-2">
+        <label for="api" class="text-gray-600 apiDiv">OpenAI API Key</label>
+        <input type="text" id="api" class="input-style apiDiv" placeholder="Enter your OpenAI API key here" />
+        <label for="text" class="text-gray-600">Description or Keyword</label>
+        <textarea id="text" class="input-style"
+          placeholder="Enter a short description of the image or a keyword"></textarea>
+        <label for="sizeSelect" class="text-gray-600">Image Size</label>
+        <select id="sizeSelect" class="input-style"></select>
+        <label for="numImagesSelect" class="text-gray-600">Number of Images</label>
+        <select id="numImagesSelect" class="input-style"></select>
+      </div>
+      <div class="mt-2 text-right">
+        <button id="btn" class="button-style">Generate</button>
+      </div>
+      <div id="loading" class="hidden flex justify-center items-center mt-10">
+        <svg class="animate-spin h-10 w-10 text-gray-500" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647zm11-2.647A7.962 7.962 0 0120 12h-4c0 3.042-1.135 5.824-3 7.938l-3-2.647z">
+          </path>
+        </svg>
 
-    function generateImage() {
-      if (text.value === "") {
-        alert("Please enter a value");
-      } else {
-        const data = {
-          prompt: text.value,
-          n: 3,
-          size: "1024x1024",
-        };
-        fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${api}`,
-          },
-          body: JSON.stringify(data),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(data);
-            const arraySize = data.data.length;
-            for (let i = 0; i < arraySize; i++) {
-              image.innerHTML += `<img src="${data.data[i].url}" alt="image" class="w-100 p-2">`;
-            }
+      </div>
+      <div id="image" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-10"></div>
+    </div>
+  </div>
+  <footer class="text-center mt-10 border-t-2 border-gray-200 py-4" id="checkAuthor">
+    <p class="text-sm">
+      Made with ❤️ by
+      <a href="https://github.com/sauravhathi" class="font-semibold">@sauravhathi</a>
+    </p>
+  </footer>
+</body>
+
+<script>
+  const url = "https://api.openai.com/v1/images/generations";
+  const text = document.getElementById("text");
+  const image = document.getElementById("image");
+  const btn = document.getElementById("btn");
+  const sizeSelect = document.getElementById("sizeSelect");
+  const numImagesSelect = document.getElementById("numImagesSelect");
+  const loadingSpinner = document.getElementById("loading");
+  const apiDiv = document.getElementsByClassName("apiDiv");
+  const apiInput = document.getElementById("api");
+
+  const sizeOptions = ["256", "512", "1024", "1280", "2560", "3840", "5120", "7680"];
+  const optionsFragment = document.createDocumentFragment();
+
+  sizeOptions.forEach((size) => {
+    const option = document.createElement("option");
+    option.value = size;
+    option.textContent = size;
+    optionsFragment.appendChild(option);
+  });
+
+  sizeSelect.appendChild(optionsFragment);
+
+  for (let i = 1; i <= 10; i++) {
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = i;
+    numImagesSelect.appendChild(option);
+  }
+
+  let imageSizes = sizeSelect.value;
+  let numImages = parseInt(numImagesSelect.value);
+  let apiKey = "";
+
+  function generateImage() {
+    if (apiKey === "") {
+      apiKey = apiInput.value.trim() || api;
+      if (apiKey === "") {
+        alert("Please enter your OpenAI API key");
+        return;
+      }
+      apiDiv[0].classList.add("hidden");
+      apiDiv[1].classList.add("hidden");
+    }
+    if (text.value === "") {
+      alert("Please enter a value");
+      return;
+    }
+
+    loadingSpinner.classList.remove("hidden");
+    btn.disabled = true;
+
+    const data = {
+      prompt: text.value,
+      n: numImages,
+      size: `${imageSizes}x${imageSizes}`,
+    };
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + apiKey,
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        loadingSpinner.classList.add("hidden");
+        btn.disabled = false;
+
+        data.data.forEach((item) => {
+          const img = document.createElement("img");
+          img.src = item.url;
+          img.alt = "image";
+          img.classList.add(
+            "w-full",
+            "h-auto",
+            "rounded-lg",
+            "shadow-lg",
+            "hover:shadow-2xl",
+            "transition",
+            "duration-500",
+            "ease-in-out",
+            "transform",
+            "hover:-translate-y-1",
+            "hover:scale-103"
+          );
+
+          image.appendChild(img);
+
+          // Double-click event listener
+          img.addEventListener("dblclick", () => {
+            downloadImage(item.url);
           });
-      }
-    }
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        loadingSpinner.classList.add("hidden");
+        btn.disabled = false;
+        alert("Something went wrong. Please try again.");
+      });
+  }
 
-    const checkAuthor = document.getElementById("checkAuthor");
-    if (checkAuthor.children[0].children[0].textContent === "@sauravhathi") {
+  const checkAuthor = document.getElementById("checkAuthor");
+  if (checkAuthor.children[0].children[0].textContent !== "@sauravhathi") {
+    window.location.href = "https://github.com/sauravhathi";
+  }
+
+  text.addEventListener("input", function () {
+    if (text.value === "") {
+      btn.classList.remove("bg-slate-900", "text-slate-50");
+      text.classList.add("border-r-2", "border-gray-200");
     } else {
-      window.location.href = "https://github.com/sauravhathi";
+      text.classList.remove("border-r-2", "border-gray-200");
+      btn.classList.add("bg-slate-900", "text-slate-50");
     }
+  });
 
-    text.addEventListener("input", function () {
-      if (text.value === "") {
-        btn.classList.remove("bg-slate-900", "text-slate-50");
-        text.classList.add("border-r-2", "border-gray-200");
-      } else {
-        text.classList.remove("border-r-2", "border-gray-200");
-        btn.classList.add("bg-slate-900", "text-slate-50");
-      }
-    });
-  </script>
-</html>
+  sizeSelect.addEventListener("change", function () {
+    imageSizes = sizeSelect.value;
+  });
+
+  numImagesSelect.addEventListener("change", function () {
+    numImages = parseInt(numImagesSelect.value);
+  });
+
+  btn.addEventListener("click", generateImage);
+
+  function downloadImage(url) {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = document.getElementById("text").value.split(" ").join("_") + ".png";
+    link.target = "_blank";
+    link.click();
+  }
+</script>
